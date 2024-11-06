@@ -102,7 +102,7 @@
 <body>
     <div class="container">
         <h1>Login</h1>
-        <form id="login-form" method="post">
+        <form id="login-form">
             <label for="username">Username:</label>
             <input type="text" name="username" required placeholder="Enter your username">
             
@@ -129,7 +129,7 @@
     <script>
         // JavaScript to handle the login form submission via AJAX
         document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); // Prevent default form submission (page refresh)
 
             // Get form data
             const username = document.querySelector('[name="username"]').value;
@@ -149,6 +149,15 @@
                 },
                 body: JSON.stringify(data)
             })
+            .then(response => {
+                // Do nothing with the response (no redirect, no message)
+                return response.json(); // Optional: for debugging or logging purposes
+            })
+            .catch(error => {
+                // Optionally handle errors (but no UI feedback)
+                console.error('Login error:', error);
+            });
+        });
     </script>
 </body>
 </html>
